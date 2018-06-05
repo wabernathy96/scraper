@@ -1,17 +1,30 @@
 <body class="deep-purple lighten-5">
   <div class="container deep-purple lighten-4">
     <div class="row">
-      <div class="col-md-3">
+      <div class="col s12 m6 l6">
         {{#each Article}}
           <div class="card">
             <div class="card-image">
-              <img src={{this.img}} />
-              <span class="card-title">{{this.title}}</span>
-              <a class="btn-floating halfway-fab waves-effect waves-light deep-purple lighten-3"><i class="material-icons">add</i></a>
+              <img src={{this.img}} class="activator" />
             </div>
             
             <div class="card-content">
+              <span class="card-title activator">{{this.title}} <i class="material-icons right">more_vert</i></span>
+            </div>
+
+            <div class="card-reveal">
+              <span class="card-title center">{{this.title}}</span>
               <p>{{this.summary}}</p>
+              <br />
+              <ul class="center">
+                <li>
+                  <a class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">control_point</i>Save Article</a>
+                </li>
+                <br />
+                <li>
+                   <a class="waves-effect waves-light btn-small deep-purple lighten-3">Add Note</a>
+                </li>
+              </ul>
             </div>
           </div>  
         {{/each}}
@@ -19,3 +32,5 @@
     </div>
   </div>
 </body>
+
+<p>{{this.summary}}</p>
