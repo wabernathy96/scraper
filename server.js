@@ -1,5 +1,8 @@
 const express = require('express');
+const exphbs = require('express-handlebars');
+const path = require('path');
 const bodyParser = require('body-parser');
+const method = require('method-override');
 const logger = require('morgan');
 const mongoose = require('mongoose');
 
@@ -21,9 +24,15 @@ app.use(logger('dev'));
 // Use body-parser for handling form submissions
 app.use(bodyParser.urlencoded({ extended: true }));
 // Use express.static to serve the public folder as a static directory
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
+// Use method override for all put/delete routes
+app.use(method('_method'));
 
 require('dotenv').config();
+
+// Configure views
+app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
 let dbUrl = 'mongodb://localhost/scraper';
@@ -35,6 +44,7 @@ else {
 	mongoose.connect(dbUrl);
 };
 
+// Start server
 app.listen(PORT,
   () => {
     console.log(`SERVER RUNNING ON PORT:${PORT}`)
@@ -42,6 +52,33 @@ app.listen(PORT,
 )
 
 // Routes
+// A GET route for the home page
+app.get('/',
+  (req, res) => {
+    db.Article.find({})
+    .sort(
+      {
+        created: -1
+      }
+    )
+    .limit(12)
+    .then(
+      (data) => {
+        if(data.length === 0) {
+          res.render('placeholder', {message:'There are no articles to display! Click the "Fresh Scrape" button to load some dank content!'});
+        } else {
+          res.render('home', {Article: data});
+        }
+      }
+    )
+    .catch(
+      (error) => {
+        res.json(error);
+      }
+    );
+  }
+);
+
 // A GET route for scraping the NYT website
 app.get('/scrape',
   (req, res) => {
@@ -82,13 +119,13 @@ app.get('/scrape',
                     (err, data) => {
                       if (err) throw err;
                     }
-                  )
+                  );
                 }
               }
             );
           }
         );
-        console.log(`SCRAPE COMPLETE`);
+        console.log('SCRAPE COMPLETE');
         res.redirect('/');  
       }
     );  

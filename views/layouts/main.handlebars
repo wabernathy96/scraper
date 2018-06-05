@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+		<link rel="stylesheet" href="/style.css" type="text/css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+		<title>Scrappy Doo</title>
+</head>
+
+<body>
+	<header>
+		<div class="navbar-fixed">
+			<nav>
+				<div class="nav-wrapper deep-purple lighten-2">
+					<a href="/" class="brand-logo">Scrappy Doo</a>
+					<ul class="right hide-on-med-and-down">
+						<li>
+							<a href="/" class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">folder</i>All Articles</a>
+						</li>
+
+						<li>
+							<a href="/saved" class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">folder_shared</i>Saved Articles</a>
+						</li>
+
+						<li>
+							<a href="/scrape" class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">create_new_folder</i>Fresh Scrape</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+		<div id="container">
+			{{{ body }}}
+		</div>
+	</main>
+	
+	<footer class="page-footer deep-purple lighten-2">
+		<div class="footer-copyright">
+			<div class="container center">
+				© Copyright 2018 WWA
+			</div>
+		</div>
+		
+	</footer>
+
+
+	<script src="../../public/app.js"></script>
+</body>
+</html>
+
