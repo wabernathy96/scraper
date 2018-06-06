@@ -12,3 +12,11 @@ main {
   margin-top: 10em;
 }
 
+.card {
+  /*add inline-display*/
+  display: inline-block;
+}
+
+#featuredArticles {
+  overflow-y: scroll;
+}

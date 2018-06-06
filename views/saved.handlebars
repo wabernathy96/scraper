@@ -1,8 +1,8 @@
-<body class="deep-purple lighten-5">
-  <div class="container">
+<body>
+  {{#each saved}}
+    <div class="container">
     <div class="row">
       <div id="featuredArticles" class="col s12 m6 l6">
-        {{#each Article}}
           <div class="card" id={{this._id}}>
             <div class="card-image">
               <img src={{this.img}} class="activator" />
@@ -28,8 +28,8 @@
               </ul>
             </div>
           </div>  
-        {{/each}}
       </div>
     </div>
   </div>
+  {{/each}}
 </body>
