@@ -1,33 +1,40 @@
 <body class="deep-purple lighten-5">
   <div class="container">
     <div class="row">
-      <div id="featuredArticles" class="col s12 m6 l6">
+      <div id="featuredArticles">
         {{#each Article}}
-          <div class="card" id={{this._id}}>
-            <div class="card-image">
-              <img src={{this.img}} class="activator" />
-            </div>
-            
-            <div class="card-content">
-              <span class="card-title activator">{{this.title}} <i class="material-icons right">more_vert</i></span>
-            </div>
+          <div class="col s12 m6 l6">
+            <div class="card" id={{this._id}}>
+              <div class="card-image">
+                <img src={{this.img}} class="activator" />
+              </div>
+              
+              <div class="card-content">
+                <span class="card-title activator">{{this.title}} <i class="material-icons right">more_vert</i></span>
+              </div>
 
-            <div class="card-reveal">
-              <span class="card-title center">{{this.title}}</span>
-              <p>{{this.summary}}</p>
-              <br />
-              <ul class="center">
-                <li>
-                  <form action="/save/{{this._id}}" method="POST" />
-                  <button type="submit" value="{{this.status}}" class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">create_new_folder</i>{{this.status}}</button>
-                </li>
+              <div class="card-reveal">
+                <span class="card-title center">{{this.title}}</span>
+                <p>{{this.summary}}</p>
                 <br />
-                <li>
-                   <a class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">add_comment</i>Add Note</a>
-                </li>
-              </ul>
+                <ul class="center">
+                  <li>
+                    <a class="waves-effect waves-light btn-small deep-purple lighten-3" href="{{this.link}}" target="_blank"><i class="material-icons left">launch</i>Go To Article</a>
+                  </li>
+                  <br />
+                  <li>
+                    <form class="saveForm" action="/save/{{this._id}}" method="POST" >
+                      <button for="saveForm" type="submit" value="{{this.status}}" class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">create_new_folder</i>{{this.status}}</button>
+                    </form>
+                  </li>
+                  <br />
+                  <li>
+                    <a class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">add_comment</i>Add Note</a>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>  
+          </div>
         {{/each}}
       </div>
     </div>

@@ -66,13 +66,12 @@ app.get('/',
         created: -1 // Sort by created date, desc
       }
     )
-    .limit(12) // Limit results to 12 articles
     .then(
       (data) => {
         if(data.length === 0) { // If no data exists in db show placeholder view
           res.render('placeholder', {message:'There are no articles to display! Click the "Fresh Scrape" button to load some rooricious content!'});
         } else { // If there's data render it to home view
-          res.render('home', {Article: data});
+          res.render('home', { Article: data });
         }
       }
     )
@@ -91,49 +90,76 @@ app.get('/scrape',
       (error, response, html) => {
         let $ = cheerio.load(html);
 
-        let result = {};
+        // used for deduplication
+        let articleTitles = {};
 
-        $('div.story-body').each(
+        $('article.story.theme-summary').each(
           (i, element) => {
 
-            // Tell cheerio what specific elements to find
-            let link = $(element).find('a').attr('href');
+            // check if there is a duplicate
             let title = $(element).find('h2.headline').text().trim();
-            let summary = $(element).find('p.summary').text().trim();
-            let img = $(element).parent().find('figure.media').find('img').attr('src');
+            if (!articleTitles[title]) {
 
-            // Set properties of result obj to results of scrape
-            result.link = link;
-            result.title = title;
+              // Tell cheerio what specific elements to find
+              let link = $(element).find('a').attr('href');
+              let summary = $(element).find('p.summary').text().trim();
+              let img = $(element).parent().find('figure.media').find('img').attr('src');
 
-            if(summary) {
-              result.summary = summary;
-            }
+              let result = {};
 
-            if (img) {
-              result.img = img;
-            } else {
-              result.img = $(element).find('div.wide-thumb').find('img').attr('src');
-            }
+              // Set properties of result obj to results of scrape
+              result.link = link;
+              result.title = title;
 
-            // Create a new Article collection with results of scrape
-            let scrape = new db.Article(result);
+              if(summary) {
+                result.summary = summary;
+              }
 
-            // Query db for existing titles equal to the titles of the scrape
-            // If no data is returned from query, save results
-            db.Article.find({ title: result.title })
-            .then (
-              (data) => {
-                if (data.length === 0) {
-                  scrape.save();
+              if (img) {
+                result.img = img;
+              } else {
+                result.img = $(element).find('div.wide-thumb').find('img').attr('src');
+              }
+
+              // Create a new Article collection with results of scrape
+              //let scrape = new db.Article(result);
+
+              // Query db for existing titles equal to the titles of the scrape
+              // If no data is returned from query, save results
+              /*db.Article.create(result, 
+                (error, x) => {
+                  if (error) {res.json(error);}
+                  console.log('x', x);
                 }
-              }
-            )
-            .catch (
-              (error) => {
-                res.json(error);
-              }
-            );
+              );*/
+              
+
+              articleTitles[title] = true;
+              console.log('searching for title', title);
+              db.Article.findOne({ title })
+              .then (
+                (data) => {
+                  console.log('data after searching for title' + title, data);
+                  if (!data) {
+                    db.Article.create(result, 
+                      (error) => {
+                        console.log('created article with title', title);
+                        if (error) res.json(error);
+                      }
+                    )
+                    .catch((error) => res.json(error));
+                  } else {
+                    console.log('article already in db');
+                  }
+                }
+              )
+              .catch (
+                (error) => {
+                  res.json(error);
+                }
+              );
+            }
+
           }
         );
         console.log('SCRAPE COMPLETE');
@@ -146,18 +172,18 @@ app.get('/scrape',
 // GET route to view saved articles
 app.get('/saved',
   (req, res) => {
-    db.Article.find({saved: true})
+    db.Article.find({saved: true}) // Find articles where saved = true
     .sort (
       {
-        created: -1
+        created: -1 // Sort by date created, desc
       }
     )
     .then (
       (data) => {
-        if (data.length === 0) {
+        if (data.length === 0) { // If no articles are saved, render placeholder
           res.render('placeholder', {message: 'You have not saved any articles... Try clicking on an article then the "save article" button!'})
         } else {
-          res.render('saved', {saved: data})
+          res.render('saved', { saved: data }); // Render saved page
         }
       }
     )
@@ -172,37 +198,37 @@ app.get('/saved',
 // POST route to save articles
 app.post('/save/:id',
   (req,res) => {
-    db.Article.findById(req.params.id)
+    db.Article.findById(req.params.id) // Find articles by the id of the user req
     .then(
       (data) => {
-        if (data.saved) {
+        if (data.saved) { // If the article is already saved
           db.Article.findByIdAndUpdate(req.params.id,
             {$set:
               {
-                saved: false,
-                status: 'Save Article'
+                saved: false, // Set Saved to false
+                status: 'Save Article' // Set status of article
               }
             },
             {
-              new: true
+              new: true // Make it a new entry
             },
             (err, data) => {
-              res.redirect('/');
+              res.redirect('/'); // Redirect back to home
             }
           );
         } else {
           db.Article.findByIdAndUpdate(req.params.id,
             {$set:
               {
-                saved: true,
-                status: 'Article Saved'
+                saved: true, // If article is not saved, set saved = true
+                status: 'Article Saved' // Set article status
               }
             },
             {
-              new: true
+              new: true // Make it a new entry
             },
             (err, data) => {
-              res.redirect('/saved');
+              res.redirect('/saved'); // Redirect back to saved articles
             }
           );
         }

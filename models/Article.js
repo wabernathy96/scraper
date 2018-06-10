@@ -5,8 +5,20 @@ const Schema = mongoose.Schema;
 let Articleschema = new Schema({
 	title: {
 		type: String,
-		required: true,
-	},
+    required: true,
+    /*validate: {
+      validator: function(title, cb) {
+        //console.log('title', title);
+        Article.find({title}, function(err,docs) {
+          console.log('docs.length', docs.length);
+          let isDuplicate = docs.length !== 0;
+          //cb(isDuplicate);
+          return isDuplicate;
+        });
+      },
+      message: 'Article already exists!'
+    },*/
+  },
 	link: {
 		type: String,
 		required: true,
