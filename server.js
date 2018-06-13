@@ -15,13 +15,13 @@ const request = require('request');
 const cheerio = require('cheerio');
 
 // Require all models
-let db = require('./models/index');
+const db = require('./models/index');
 
 // Set Port
-let PORT = process.env.PORT||9001;
+const PORT = process.env.PORT||9001;
 
 // Initialize Express
-let app = express();
+const app = express();
 
 // Configure middleware
 // Use morgan logger for logging requests
@@ -40,7 +40,7 @@ app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 
 // Connect to the Mongo DB
-let dbUrl = 'mongodb://localhost/scraper';
+const dbUrl = 'mongodb://localhost/scraper';
 
 if (process.env.MONGODB_URI) {
 	mongoose.connect(process.env.MONGODB_URI);
@@ -121,29 +121,16 @@ app.get('/scrape',
                 result.img = $(element).find('div.wide-thumb').find('img').attr('src');
               }
 
-              // Create a new Article collection with results of scrape
-              //let scrape = new db.Article(result);
-
-              // Query db for existing titles equal to the titles of the scrape
-              // If no data is returned from query, save results
-              /*db.Article.create(result, 
-                (error, x) => {
-                  if (error) {res.json(error);}
-                  console.log('x', x);
-                }
-              );*/
-              
-
               articleTitles[title] = true;
+
               console.log('searching for title', title);
               db.Article.findOne({ title })
               .then (
                 (data) => {
-                  console.log('data after searching for title' + title, data);
+                  
                   if (!data) {
                     db.Article.create(result, 
                       (error) => {
-                        console.log('created article with title', title);
                         if (error) res.json(error);
                       }
                     )
@@ -163,7 +150,7 @@ app.get('/scrape',
           }
         );
         console.log('SCRAPE COMPLETE');
-        res.redirect('/');  
+        res.redirect('/');
       }
     );  
   }
@@ -242,11 +229,60 @@ app.post('/save/:id',
   }
 );
 
-// PUT route to update articles to unsaved
-
 // POST route to save/update note to article
+app.post('/article/:id',
+  (req, res) => {
+    console.log('start of post', req.body);
+    db.Note.create(req.body)
+    .then(
+      (dbNote) => {
+        console.log('note created', dbNote);
+        return db.Article.findOneAndUpdate(
+          {
+            _id: req.params.id
+          },
+          {
+            note: dbNote._id
+          },
+          {
+            new: true
+          }
+        )
+      }
+    )
+    .then (
+      (dbArticle) => {
+        console.log('dbArticle', dbArticle)
+        res.redirect('/');
+      }
+    )
+    .catch(
+      (err) => {
+        res.json(err);
+      }
+    )
+      
+  
+  }
+);
 
 // GET route to view notes saved to article
+app.get('/article/:id',
+  (req, res) => {
+    db.Article.findById(req.params.id)
+    .populate('note')
+    .then(
+      (dbArticle) => {
+        res.redirect('/');
+      }
+    )
+    .catch(
+      (err) => {
+        res.json(err);
+      }
+    )
+  }
+);
 
 
 

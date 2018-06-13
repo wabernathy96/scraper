@@ -18,18 +18,57 @@
               <br />
               <ul class="center">
                 <li>
+                  <a class="waves-effect waves-light btn-small deep-purple lighten-3" href="{{this.link}}" target="_blank"><i class="material-icons left">launch</i>Go To Article</a>
+                </li>
+                <br />
+                <li>
                   <form action="/save/{{this._id}}" method="POST" />
                   <button type="submit" value="{{this.status}}" class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">create_new_folder</i>{{this.status}}</button>
                 </li>
                 <br />
-                <li>
-                   <a class="waves-effect waves-light btn-small deep-purple lighten-3"><i class="material-icons left">add_comment</i>Add Note</a>
-                </li>
+                {{!-- <li>
+                    <a href="#modal{{this._id}}" class="waves-effect waves-light btn-small deep-purple lighten-3 modal-trigger">
+                      <i class="material-icons left">add_comment</i>
+                      Add a Note
+                    </a> 
+                </li> --}}
               </ul>
             </div>
           </div>  
       </div>
     </div>
   </div>
+
+  {{!-- <div id="modal{{this._id}}" class="modal">
+    <div id="addNote" class="modal-content center">
+      <h3>Article: <span id="articleTitle"></span></h3>
+      <div class="row">
+        <form id="addNoteForm" action="/article/{{this._id}}" >
+          <div class="row">
+            <div class="input-field col m12">
+              <input type="text"  id="noteTitle">
+              <label for="noteTitle">Note Title</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field m12">
+              <textarea id="noteBody" class="materialize-textarea" ></textarea>
+              <label for="noteBody">Note Text</label>
+            </div>
+          </div>
+          <div class="row">
+            <button type="submit" id="addNoteButton" for="addNoteForm" class="waves-effect waves-light btn-small deep-purple lighten-3 modal-close">
+              Save Note
+            </button>
+          </div>
+        </form>
+        <div class="row">
+          <button type="button" id="closeModalButton" class="btn-flat modal-close btn-small deep-purple lighten-5 waves-effect">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> --}}
   {{/each}}
 </body>
